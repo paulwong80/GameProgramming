@@ -8,7 +8,7 @@ namespace RenderEngine {
 	}
 	void Mesh::Draw()
 	{
-		if (!border)
+		if (border)
 		{
 			glEnable(GL_STENCIL_TEST);
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -19,9 +19,11 @@ namespace RenderEngine {
 		pShader->SetFloat("x",m_x);
 		pShader->SetFloat("y", m_y);
 		pShader->SetVec3("color", m_r, m_g, m_b);
+		pShader->SetFloat("s", 1.0f);
+		pShader->SetFloat("rotation", m_rotation);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, m_numOfVertices);
-		if (!border)
+		if (border)
 		{
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
@@ -62,7 +64,17 @@ namespace RenderEngine {
 
 	void Mesh::setBorderThick(int t)
 	{
-		m_bscale = t / m_radius;
+		m_bscale = t / 1600.0 /m_radius + 1;
+	}
+
+	void Mesh::setRotation(float r)
+	{
+		m_rotation = r;
+	}
+
+	Vec2 Mesh::getPosition()
+	{
+		return Vec2(m_x, m_y);
 	}
 
 	void Mesh::CreateCircle(float radius, int step) 

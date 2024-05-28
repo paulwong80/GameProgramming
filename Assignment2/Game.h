@@ -1,6 +1,9 @@
 #pragma once
 #include "EntityManager.h"
 #include "GLFW/glfw3.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_glfw.h"
+#include "ImGui/imgui_impl_opengl3.h"
 
 struct PlayerConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V; float S; };
 struct EnemyConfig { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX; };
@@ -19,7 +22,9 @@ class Game
 	int m_lastEnemySpawnTime = 0;
 	bool m_running = true;
 	bool m_paused;
-
+	int frameRate;
+	bool m_ui_window = true;
+	int width = 1280, height = 760;
 	std::shared_ptr<Entity> m_player;
 
 	void init(const std::string& path);

@@ -104,12 +104,15 @@
     <ClInclude Include="Render\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Render\shaders\core.fs" />
     <None Include="Render\shaders\core.vs" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="config.txt.txt" />
+    <Text Include="config.txt" />
   </ItemGroup>
 </Project>
