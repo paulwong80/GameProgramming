@@ -59,6 +59,26 @@ void Game::init(const std::string& path)
 
 void Game::sMovement()
 {
+	auto e = m_entities.getEntities("Player");
+	m_player = e[0];
+	float speed = m_playerConfig.S;
+	Vec2 temp = m_player->cShape->ptr_Mesh->getPosition();
+	if (m_player->cInput->up)
+	{
+		m_player->cShape->ptr_Mesh->setPosition(temp.x, temp.y + speed * 0.002);
+	}
+	if (m_player->cInput->down)
+	{
+		m_player->cShape->ptr_Mesh->setPosition(temp.x, temp.y - speed * 0.002);
+	}
+	if (m_player->cInput->left)
+	{
+		m_player->cShape->ptr_Mesh->setPosition(temp.x - speed * 0.002, temp.y);
+	}
+	if (m_player->cInput->right)
+	{
+		m_player->cShape->ptr_Mesh->setPosition(temp.x + speed * 0.002, temp.y);
+	}
 }
 
 void Game::sLifespan()
@@ -68,9 +88,11 @@ void Game::sLifespan()
 void Game::spawnPlayer()
 {
 	auto e = m_entities.addEntity("Player");
-	e->cTransform = std::make_shared<CTransform>(Vec2(0,0), Vec2(0,0), 10.0f);
+	e->cTransform = std::make_shared<CTransform>(Vec2(0,0), Vec2(0,0), ROTATION);
 	e->cShape = std::make_shared<CShape>(m_playerConfig.SR/float(width/2), m_playerConfig.V, Color(m_playerConfig.FR, m_playerConfig.FG, m_playerConfig.FB), Color(m_playerConfig.OR, m_playerConfig.OG, m_playerConfig.OG), m_playerConfig.OT);
-
+	e->cCollision = std::make_shared<CCollision>(m_playerConfig.CR);
+	e->cInput = std::make_shared<CInput>();
+	m_player = e;
 }
 
 void Game::sEnemySpawner()
@@ -83,25 +105,16 @@ void Game::sCollision()
 
 void Game::sUserInput()
 {
-	auto e = m_entities.getEntities("Player");
+	//auto e = m_entities.getEntities("Player");
 	float speed = m_playerConfig.S;
-	Vec2 temp = e[0]->cShape->ptr_Mesh->getPosition();
-	if (keys[GLFW_KEY_W] )
-	{
-		e[0]->cShape->ptr_Mesh->setPosition(temp.x, temp.y + speed * 0.002);
-	}
-	if (keys[GLFW_KEY_S] )
-	{
-		e[0]->cShape->ptr_Mesh->setPosition(temp.x, temp.y - speed * 0.002);
-	}
-	if (keys[GLFW_KEY_A] )
-	{
-		e[0]->cShape->ptr_Mesh->setPosition(temp.x - speed * 0.002, temp.y );
-	}
-	if (keys[GLFW_KEY_D])
-	{
-		e[0]->cShape->ptr_Mesh->setPosition(temp.x + speed * 0.002, temp.y);
-	}
+	Vec2 temp = m_player->cShape->ptr_Mesh->getPosition();
+
+		m_player->cInput->up = keys[GLFW_KEY_W];
+		m_player->cInput->down = keys[GLFW_KEY_S];
+		m_player->cInput->left = keys[GLFW_KEY_A];
+		m_player->cInput->right = keys[GLFW_KEY_D];
+
+	
 }
 
 void Game::sGUI()
@@ -112,7 +125,7 @@ void Game::sRender()
 {
 	for  (auto e : m_entities.getEntities())
 	{
-		float t = glfwGetTime() * ROTATION;
+		float t = glfwGetTime() * e->cTransform->angle;
 		e->cShape->ptr_Mesh->setRotation(t);
 		e->cShape->ptr_Mesh->Draw();
 	}
